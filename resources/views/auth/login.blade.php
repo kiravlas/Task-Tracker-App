@@ -14,6 +14,7 @@
 
         </div>
 
+  
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')"/>
