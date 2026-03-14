@@ -6,7 +6,7 @@ use App\Http\Controllers\EmailVerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
 Route::middleware('guest')->group(function () {
@@ -21,9 +21,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [EmailVerificationController::class, 'index'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-        ->middleware('signed')
+        ->middleware('signed', 'throttle:10,1')
         ->name('verification.verify');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+        ->middleware(['throttle:5,1'])
+        ->name('verification.send');
 
 });
 
