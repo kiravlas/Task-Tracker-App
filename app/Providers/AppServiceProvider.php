@@ -46,6 +46,20 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('password-reset-request', function (Request $request) {
+            return [
+                Limit::perHour(10)->by($request->ip()),
+                Limit::perHour(3)->by($request->input('email')),
+            ];
+        });
+
+        RateLimiter::for('password-reset', function (Request $request) {
+            return [
+                Limit::perHour(5)->by($request->ip()),
+                Limit::perHour(3)->by($request->input('email')),
+            ];
+        });
+
         Password::defaults(function () {
             if ($this->app->isLocal()) {
                 return Password::min(8);
